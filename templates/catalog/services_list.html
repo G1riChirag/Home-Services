@@ -1,0 +1,19 @@
+
+{% extends 'base.html' %}
+{% block content %}
+<h3>Services</h3>
+<div class="row">
+{% for s in services %}
+  <div class="col-md-4 mb-3">
+    <div class="card p-3 h-100">
+      <h5>{{ s.name }}</h5>
+      <p class="text-muted">{{ s.category }}</p>
+      <p>{{ s.description|default:"" }}</p>
+      <p><strong>Base:</strong> ${{ s.base_price_cents|floatformat:-2 }}</p>
+    </div>
+  </div>
+{% empty %}
+  <p>No services yet.</p>
+{% endfor %}
+</div>
+{% endblock %}

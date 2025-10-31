@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% load static %}
+{% load currency %}
+{% block breadcrumbs %}{% endblock %}
+{% block page_header %}{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<section class="rounded-3 overflow-hidden mb-4">
+  <div class="position-relative">
+    <!-- Replace with your own image in static/img/home-hero.jpg -->
+    <img src="{% static 'img/home-hero.jpg' %}" class="w-100" alt="Trusted home services professionals at work" style="max-height: 380px; object-fit: cover;">
+    <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center" style="background: linear-gradient(90deg, rgba(0,0,0,.55), rgba(0,0,0,.15));">
+      <div class="container text-white">
+        <h1 class="display-6 fw-semibold mb-2">Home Services — fast, safe, privacy-first</h1>
+        <p class="lead mb-3">Book inspections, packages, or specific trades with transparent pricing and COVID-aware safety.</p>
+        <div class="d-flex gap-2">
+          <a class="btn btn-primary" href="{% url 'services' %}">Explore Services</a>
+          <a class="btn btn-outline-light" href="{% url 'packages' %}">View Packages</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Quick stats -->
+<section class="mb-4">
+  <div class="row g-3">
+    <div class="col-6 col-md-3">
+      <div class="card text-center">
+        <div class="card-body">
+          <div class="fw-bold fs-4">{{ services_count }}</div>
+          <div class="text-muted small">Services</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card text-center">
+        <div class="card-body">
+          <div class="fw-bold fs-4">{{ packages_count }}</div>
+          <div class="text-muted small">Packages</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6">
+      <div class="card border-success">
+        <div class="card-body d-flex align-items-center gap-3">
+          <img src="{% static 'img/safety.jpg' %}" alt="COVID-safe visit" class="rounded" style="width:72px;height:72px;object-fit:cover;">
+          <div>
+            <div class="fw-semibold">COVID-aware & privacy-by-design</div>
+            <div class="text-muted small">Workers confirm vaccination status on file. Minimal data collected and stored with consent.</div>
+          </div>
+          <a href="{% url 'profile' %}" class="btn btn-sm btn-success ms-auto">Manage Preferences</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Featured services -->
+<section class="mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h5 mb-0">Popular services</h2>
+    <a href="{% url 'services' %}" class="btn btn-sm btn-outline-secondary">See all</a>
+  </div>
+
+  {% if featured_services %}
+    <div class="row g-3">
+      {% for s in featured_services %}
+        <div class="col-12 col-sm-6 col-lg-4">
+          <div class="card h-100">
+            <div class="ratio ratio-16x9 bg-light">
+              <!-- Optional per-service photo; fallback to generic -->
+              <img src="{% static 'img/service-generic.jpg' %}" class="rounded-top" alt="{{ s.name }}" style="object-fit:cover;">
+            </div>
+            <div class="card-body">
+              <div class="fw-semibold">{{ s.name }}</div>
+              {% if s.category %}
+                <div class="text-muted small">{{ s.category }}</div>
+              {% endif %}
+              {% if s.base_price_cents %}
+                <div class="mt-2">
+                  <span class="badge text-bg-light">From ${{ s.base_price_cents|cents_to_dollars }}</span>
+                </div>
+              {% endif %}
+            </div>
+            <div class="card-footer bg-white border-0 pt-0">
+              <a href="{% url 'services' %}" class="btn btn-sm btn-primary">Book</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-info mb-0">Services will appear here once added.</div>
+  {% endif %}
+</section>
+
+<!-- Featured packages -->
+<section class="mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h5 mb-0">Recommended packages</h2>
+    <a href="{% url 'packages' %}" class="btn btn-sm btn-outline-secondary">See all</a>
+  </div>
+
+  {% if featured_packages %}
+    <div class="row g-3">
+      {% for p in featured_packages %}
+        <div class="col-12 col-md-4">
+          <div class="card h-100">
+            <div class="ratio ratio-16x9 bg-light">
+              <img src="{% static 'img/package-generic.jpg' %}" class="rounded-top" alt="{{ p.title }}" style="object-fit:cover;">
+            </div>
+            <div class="card-body">
+              <div class="fw-semibold">{{ p.title }}</div>
+              {% if p.description %}
+                <div class="text-muted small">{{ p.description|truncatechars:120 }}</div>
+              {% endif %}
+              {% if p.price_cents %}
+                <div class="mt-2 fw-semibold">
+                  ${{ p.price_cents|cents_to_dollars }}
+                </div>
+              {% endif %}
+            </div>
+            <div class="card-footer bg-white border-0 pt-0">
+              <a href="{% url 'package-detail' p.pk %}" class="btn btn-sm btn-primary">Details</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-info mb-0">Packages will appear here once added.</div>
+  {% endif %}
+</section>
+
+<!-- CTA -->
+<section class="mb-4">
+  <div class="card border-0 bg-light">
+    <div class="card-body d-flex flex-column flex-md-row align-items-md-center">
+      <div class="me-md-3">
+        <div class="fw-semibold">Need a general safety inspection?</div>
+        <div class="text-muted small">We’ll list urgent work to keep your home secure and safe.</div>
+      </div>
+      <a href="{% url 'booking-new' %}" class="btn btn-success ms-md-auto mt-2 mt-md-0">Book an inspection</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

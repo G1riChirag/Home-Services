@@ -1,0 +1,102 @@
+# ==========================================
+# macOS
+# ==========================================
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ==========================================
+# Python / Django
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django stuff:
+*.log
+*.pot
+*.pyc
+*.mo
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+.env
+.env.*
+
+# Migrations (optional — keep if you prefer tracking)
+# */migrations/*
+# !*/migrations/__init__.py
+
+# ==========================================
+# Virtual environments
+# ==========================================
+venv/
+env/
+ENV/
+.venv/
+.env/
+env.bak/
+venv.bak/
+
+# ==========================================
+# IDE / Editor
+# ==========================================
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# ==========================================
+# Python packaging
+# ==========================================
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# ==========================================
+# Unit test / coverage
+# ==========================================
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# ==========================================
+# Others
+# ==========================================
+*.swp
+*.bak
+*.tmp
+*.orig
+*.log
+
+# ==========================================
+# Local settings (optional)
+# ==========================================
+local_settings.py

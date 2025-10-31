@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+<div class="card shadow-sm">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h3 class="card-title mb-0">Booking #{{ booking.id }}</h3>
+      <div class="d-flex gap-2">
+        {% if booking.status == "Pending" %}
+          <form method="post" action="{% url 'booking-confirm' booking.id %}" class="d-inline">
+            {% csrf_token %}
+            <button class="btn btn-success">Confirm</button>
+          </form>
+        {% endif %}
+
+        <!-- Check-in button to log a contact event -->
+        <form method="post" action="{% url 'booking-checkin' booking.id %}" class="d-inline">
+          {% csrf_token %}
+          <button class="btn btn-outline-primary">Check in (log contact)</button>
+        </form>
+
+        <a class="btn btn-outline-secondary" href="{% url 'booking-qr' booking.id %}">View QR</a>
+
+        {% comment %} Payments: Pay Now / Receipts {% endcomment %}
+        {% if booking.quoted_price_cents %}
+          <form method="post" action="{% url 'payments:start' booking.id %}" class="d-inline">
+            {% csrf_token %}
+            <button class="btn btn-warning">Pay now</button>
+          </form>
+        {% endif %}
+      </div>
+    </div>
+
+    <p class="text-muted mb-4">
+      Created {{ booking.created_at|naturaltime }}
+      <span class="ms-2" title="{{ booking.created_at|date:'Y-m-d H:i:s T' }}"></span>
+    </p>
+
+    <dl class="row mb-0">
+      <dt class="col-sm-3">User</dt>
+      <dd class="col-sm-9">{{ booking.user.username }}</dd>
+
+      <dt class="col-sm-3">Type</dt>
+      <dd class="col-sm-9">{{ booking.type }}</dd>
+
+      <dt class="col-sm-3">Status</dt>
+      <dd class="col-sm-9"><span class="badge text-bg-secondary">{{ booking.status }}</span></dd>
+
+      <dt class="col-sm-3">Preferred Date</dt>
+      <dd class="col-sm-9">{{ booking.preferred_date|date:"Y-m-d"|default:"(none)" }}</dd>
+
+      <dt class="col-sm-3">Duration (hours)</dt>
+      <dd class="col-sm-9">{{ booking.duration_hours|default:"(none)" }}</dd>
+
+      <dt class="col-sm-3">Quoted Price (cents)</dt>
+      <dd class="col-sm-9">{{ booking.quoted_price_cents|default:"(none)" }}</dd>
+
+      <dt class="col-sm-3">Budget (cents)</dt>
+      <dd class="col-sm-9">{{ booking.budget_cents|default:"(none)" }}</dd>
+
+      <dt class="col-sm-3">Address</dt>
+      <dd class="col-sm-9">{{ booking.address|default:"(none)" }}</dd>
+
+      <dt class="col-sm-3">Package</dt>
+      <dd class="col-sm-9">
+        {% if booking.package %}
+          {{ booking.package.title }}
+        {% else %}
+          (none)
+        {% endif %}
+      </dd>
+
+      <dt class="col-sm-3">Service</dt>
+      <dd class="col-sm-9">
+        {% if booking.service %}
+          {{ booking.service.name }}
+        {% else %}
+          (none)
+        {% endif %}
+      </dd>
+
+      <dt class="col-sm-3">Notes</dt>
+      <dd class="col-sm-9">
+        {% if booking.notes %}
+          <pre class="mb-0 bg-light p-2 rounded">{{ booking.notes }}</pre>
+        {% else %}
+          (none)
+        {% endif %}
+      </dd>
+    </dl>
+
+    {% if booking.items.all %}
+      <hr>
+      <h5 class="mb-2">Items</h5>
+      {% if booking.items.exists %}
+        <div class="table-responsive">
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th>Service</th>
+                <th class="text-end">Qty</th>
+                <th class="text-end">Price (cents)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for it in booking.items.all %}
+                <tr>
+                  <td>{{ it.service.name }}</td>
+                  <td class="text-end">{{ it.qty }}</td>
+                  <td class="text-end">{{ it.price_cents }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="text-muted">(no items)</div>
+      {% endif %}
+    {% endif %}
+
+    {% if booking.invoices.all %}
+      <hr>
+      <h5 class="mb-2">Invoices</h5>
+      {% if booking.invoices.exists %}
+        <ul class="list-unstyled mb-0">
+          {% for inv in booking.invoices.all %}
+            <li>
+              <a href="{% url 'payments:invoice-detail' inv.number %}">
+                {{ inv.number }}
+              </a>
+              — ${{ inv.total_cents|floatformat:-2 }} on {{ inv.issued_at|date:"Y-m-d H:i" }}
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <div class="text-muted">(no invoices)</div>
+      {% endif %}
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

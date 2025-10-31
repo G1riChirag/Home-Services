@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card shadow-sm">
+  <div class="card-body">
+    <h3 class="card-title mb-3">{{ title|default:"New Booking" }}</h3>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label" for="{{ form.type.id_for_label }}">Type</label>
+          {{ form.type }}
+          {% for e in form.type.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label" for="{{ form.preferred_date.id_for_label }}">Preferred Date</label>
+          {{ form.preferred_date }}
+          {% for e in form.preferred_dates.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label" for="{{ form.duration_hours.id_for_label }}">Duration (hours)</label>
+          {{ form.duration_hours }}
+          {% for e in form.duration_hours.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label" for="{{ form.package.id_for_label }}">Package (optional)</label>
+          {{ form.package }}
+          {% for e in form.package.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label" for="{{ form.service.id_for_label }}">Service (optional)</label>
+          {{ form.service }}
+          {% for e in form.service.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label" for="{{ form.quoted_price_cents.id_for_label }}">Quoted Price (cents)</label>
+          {{ form.quoted_price_cents }}
+          {% for e in form.quoted_price_cents.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="col-12">
+          <label class="form-label" for="{{ form.address.id_for_label }}">Address</label>
+          {{ form.address }}
+          <div class="form-text">e.g., <code>{"street":"1 King William St","city":"Adelaide"}</code></div>
+          {% for e in form.address.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="col-12">
+          <label class="form-label" for="{{ form.notes.id_for_label }}">Notes</label>
+          {{ form.notes }}
+          {% for e in form.notes.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+        </div>
+      </div>
+
+      <div class="d-flex gap-2 mt-3">
+        <button type="submit" class="btn btn-primary">Save</button>
+        {% if booking %}
+          <a class="btn btn-outline-secondary" href="{% url 'booking-detail' booking.id %}">Cancel</a>
+          <a class="btn btn-success" href="{% url 'booking-confirm' booking.id %}">Confirm</a>
+          <a class="btn btn-outline-secondary" href="{% url 'booking-qr' booking.id %}">QR</a>
+        {% else %}
+          <a class="btn btn-outline-secondary" href="{% url 'booking-list' %}">Cancel</a>
+        {% endif %}
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

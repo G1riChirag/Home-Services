@@ -1,0 +1,19 @@
+
+{% extends 'base.html' %}
+{% block content %}
+<h3>Packages</h3>
+<div class="row">
+{% for p in packages %}
+  <div class="col-md-4 mb-3">
+    <div class="card p-3 h-100">
+      <h5>{{ p.title }}</h5>
+      <p>{{ p.description|truncatechars:120 }}</p>
+      <p><strong>Price:</strong> ${{ p.price_cents|floatformat:-2 }}</p>
+      <a class="btn btn-outline-primary" href="{% url 'package-detail' p.pk %}">View</a>
+    </div>
+  </div>
+{% empty %}
+  <p>No packages yet.</p>
+{% endfor %}
+</div>
+{% endblock %}

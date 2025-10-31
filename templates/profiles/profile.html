@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card shadow-sm">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h3 class="card-title mb-0">My Profile</h3>
+      <a class="btn btn-primary" href="{% url 'profile-edit' %}">Edit Profile</a>
+    </div>
+
+    <dl class="row mb-0">
+      <dt class="col-sm-3">Name</dt>
+      <dd class="col-sm-9">{{ profile.name|default:"(not set)" }}</dd>
+
+      <dt class="col-sm-3">Age</dt>
+      <dd class="col-sm-9">{{ profile.age|default:"(not set)" }}</dd>
+
+      <dt class="col-sm-3">Language</dt>
+      <dd class="col-sm-9">{{ profile.language|default:"(not set)" }}</dd>
+
+      <dt class="col-sm-3">Citizenship</dt>
+      <dd class="col-sm-9">{{ profile.citizenship|default:"(not set)" }}</dd>
+
+      <!-- Vaccination status (derived) + proof -->
+      <dt class="col-sm-3">COVID Vaccination</dt>
+      <dd class="col-sm-9">
+        {% if profile.vaccination_status == "Verified" %}
+          <span class="badge text-bg-success">Verified</span>
+        {% elif profile.vaccination_status == "Awaiting verification" %}
+          <span class="badge text-bg-warning">Awaiting verification</span>
+        {% else %}
+          <span class="text-muted">(not provided)</span>
+        {% endif %}
+
+        {% if profile.vaccination_proof %}
+          <div class="small mt-1">
+            Proof file:
+            <a href="{{ profile.vaccination_proof.url }}" target="_blank" rel="noopener">View PDF</a>
+            {% if profile.vaccination_uploaded_at %}
+              <span class="text-muted"> · uploaded {{ profile.vaccination_uploaded_at }}</span>
+            {% endif %}
+          </div>
+        {% endif %}
+      </dd>
+
+      <dt class="col-sm-3">Consent</dt>
+      <dd class="col-sm-9"><pre class="mb-0 bg-light p-2 rounded">{{ profile.consent|default:"{}" }}</pre></dd>
+
+      <dt class="col-sm-3">Address</dt>
+      <dd class="col-sm-9"><pre class="mb-0 bg-light p-2 rounded">{{ profile.address|default:"{}" }}</pre></dd>
+    </dl>
+  </div>
+</div>
+
+<!-- Security / Two-Factor Authentication -->
+<div class="card shadow-sm mt-3">
+  <div class="card-body">
+    <h3 class="card-title mb-3">Two-Factor Authentication</h3>
+
+    {% if twofa_enabled %}
+      <div class="alert alert-success">2FA is enabled on your account.</div>
+
+      <!-- Only show Disable when enabled -->
+      <form method="post" action="{% url 'profile-2fa-disable' %}" class="mt-2">
+        {% csrf_token %}
+        <button class="btn btn-outline-danger btn-sm" type="submit">Disable 2FA</button>
+      </form>
+
+    {% else %}
+      <div class="alert alert-info">
+        Scan the QR with your authenticator app, then enter the 6-digit code to enable.
+      </div>
+
+      <div class="d-flex align-items-start gap-3">
+        <img
+          src="data:image/png;base64,{{ twofa_qr_base64 }}"
+          alt="2FA QR"
+          class="border rounded"
+          style="width:180px;height:180px;"
+        >
+        <div>
+          <div class="text-muted small mb-1">Secret (manual entry):</div>
+          <code>{{ twofa_secret }}</code>
+
+          <form method="post" action="{% url 'profile-2fa-enable' %}" class="mt-3">
+            {% csrf_token %}
+            <div class="input-group" style="max-width:320px;">
+              <input name="otp" class="form-control" placeholder="123456"
+                     inputmode="numeric" autocomplete="one-time-code" maxlength="6">
+              <button class="btn btn-primary" type="submit">Verify & Enable</button>
+            </div>
+            <div class="form-text">Enter the current code from your authenticator app.</div>
+          </form>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Health -->
+<div class="card shadow-sm mt-3">
+  <div class="card-body">
+    <h3 class="card-title mb-3">Health</h3>
+    <form method="post" action="{% url 'report-positive' %}" onsubmit="return confirm('This will anonymously notify your recent contacts (last 15 days). Proceed?');">
+      {% csrf_token %}
+      <button class="btn btn-danger">Report Positive COVID</button>
+    </form>
+    <div class="form-text mt-2">No personal identity is revealed to contacts. Alerts expire after 15 days.</div>
+  </div>
+</div>
+
+<!-- Danger zone -->
+<div class="card shadow-sm mt-3 border-danger">
+  <div class="card-body">
+    <h3 class="card-title mb-3 text-danger">Danger Zone</h3>
+    <p class="text-muted mb-3">Delete your account and all associated data. This cannot be undone.</p>
+    <a href="{% url 'users:delete-account' %}" class="btn btn-outline-danger">Delete my account</a>
+  </div>
+</div>
+
+{% endblock %}

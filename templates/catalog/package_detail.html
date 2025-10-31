@@ -1,0 +1,8 @@
+
+{% extends 'base.html' %}
+{% block content %}
+<h3>{{ package.title }}</h3>
+<p>{{ package.description }}</p>
+<p><strong>Price:</strong> ${{ package.price_cents|floatformat:-2 }}</p>
+<a class="btn btn-primary" href="{% url 'booking-new' %}">Book this package</a>
+{% endblock %}

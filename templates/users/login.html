@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card shadow-sm">
+  <div class="card-body">
+    <h3 class="card-title mb-3">Login</h3>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% if form.non_field_errors %}
+        {% for e in form.non_field_errors %}
+          <div class="alert alert-danger mb-3">{{ e }}</div>
+        {% endfor %}
+      {% endif %}
+
+      <div class="mb-3">
+        <label class="form-label" for="{{ form.username.id_for_label }}">Username</label>
+        {{ form.username }}
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="{{ form.password.id_for_label }}">Password</label>
+        {{ form.password }}
+      </div>
+
+      <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+
+  </div>
+</div>
+
+<!-- OTP Modal -->
+<div class="modal fade" id="otpModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <form method="post">
+        <div class="modal-header">
+          <h5 class="modal-title">Two-Factor Code</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          {% csrf_token %}
+          <!-- carry username & password so the second submit includes them -->
+          <input type="hidden" name="{{ form.username.html_name }}"
+                 value="{{ form.data.username|default:form.username.value|default:'' }}">
+          <input type="hidden" name="{{ form.password.html_name }}"
+                 value="{{ form.data.password|default:'' }}">
+
+          <label class="form-label" for="{{ form.otp.id_for_label }}">Enter 6-digit code</label>
+          {{ form.otp }}
+
+          {# show the error only after the user tried once #}
+          {% if not otp_first_prompt and form.otp.errors %}
+            <div class="invalid-feedback d-block">{{ form.otp.errors|striptags }}</div>
+          {% endif %}
+          <div class="form-text">Open your authenticator app and enter the current code.</div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Verify &amp; Sign in</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% if show_otp_modal %}
+<script>
+  window.addEventListener('DOMContentLoaded', function () {
+    function openOtpWhenReady() {
+      if (!window.bootstrap) return setTimeout(openOtpWhenReady, 30);
+      const el = document.getElementById('otpModal');
+      if (!el) return;
+      const modal = new bootstrap.Modal(el);
+      modal.show();
+      setTimeout(() => {
+        const otpInput = document.getElementById('{{ form.otp.id_for_label }}');
+        if (otpInput) otpInput.focus();
+      }, 150);
+    }
+    openOtpWhenReady();
+  });
+</script>
+{% endif %}
+{% endblock %}
