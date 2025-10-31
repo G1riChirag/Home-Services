@@ -30,18 +30,19 @@ class ReviewAdmin(admin.ModelAdmin):
         "booking",
         "get_service",
         "rating",
-        "created_at"
+        "created_at",
     )
     search_fields = (
-        "booking__service__name"
+        "booking__service__name",
     )
     readonly_fields = (
         "booking",
         "get_service",
         "rating",
-        "created_at"
+        "created_at",
     )
+
     def get_service(self, obj):
-        return obj.booking.service
+        return obj.booking.service if obj.booking and obj.booking.service else "-"
     
     get_service.short_description = "Service"
