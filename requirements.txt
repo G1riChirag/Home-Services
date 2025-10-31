@@ -23,3 +23,7 @@ pyotp==2.9.0
 pytokens==0.1.10
 qrcode==8.2
 sqlparse==0.5.3
+pytest
+pytest-django
+hypothesis
+freezegun
