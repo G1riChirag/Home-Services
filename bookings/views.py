@@ -1,3 +1,4 @@
+from datetime import timedelta
 import io
 import qrcode
 
@@ -10,8 +11,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
 
 from utils.mixins import BreadcrumbsMixin
-from .models import Booking, ContactEvent, ExposureAlert  # ExposureAlert imported for future use
-from .forms import BookingForm
+from .models import Booking, ContactEvent, ExposureAlert, Review  # ExposureAlert imported for future use
+from .forms import BookingForm, ReviewForm
 
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
@@ -137,3 +138,28 @@ def booking_checkin(request, pk):
     messages.success(request, "Check-in recorded.")
     # Send both parties back to somewhere sensible
     return redirect("booking-detail", pk=pk) if request.user == booking.user else redirect("booking-list")
+
+@login_required
+def submit_review(request, pk):
+    booking = get_object_or_404(Booking, id=pk, user=request.user)
+
+    if booking.status != "Done":
+        messages.error(request, "You can only review completed bookings.")
+        return redirect("booking-detail", pk=booking.id)
+
+    if hasattr(booking, "review"):
+        messages.info(request, "You have already submitted a review for this booking.")
+        return redirect("booking-detail", pk=booking.id)
+
+    if request.method == "POST":
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.booking = booking
+            review.save()
+            messages.success(request, "Thank you for your feedback.")
+            return redirect("booking-detail", pk=booking.id)
+    else:
+        form = ReviewForm()
+
+    return render(request, "bookings/review_form.html", {"form": form, "booking": booking})

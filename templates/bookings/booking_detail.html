@@ -88,6 +88,20 @@
           (none)
         {% endif %}
       </dd>
+      <dt class="col-sm-3">Review</dt>
+      <dd class="col-sm-9">
+        {% if booking.status == "Done" and not booking.review %}
+          <a href="{% url 'review-submit' booking.id %}" class="btn btn-outline-success">Leave a Review</a>
+        {% else %}
+          {{ booking.review.rating }}/5
+        {% endif %}
+      </dd>
+      <dt class="col-sm-3">Comments</dt>
+      <dd class="col-sm-9">
+        {% if booking.review.comment %}
+          <p class="text-muted">"{{ booking.review.comment }}"</p>
+        {% endif %}
+      </dd>
     </dl>
 
     {% if booking.items.all %}

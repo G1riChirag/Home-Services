@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Booking
+from .models import Booking, Review
 
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin):
@@ -23,3 +23,25 @@ class BookingAdmin(admin.ModelAdmin):
         "notes"
     )
     readonly_fields = ("created_at",)
+
+@admin.register(Review)
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = (
+        "booking",
+        "get_service",
+        "rating",
+        "created_at"
+    )
+    search_fields = (
+        "booking__service__name"
+    )
+    readonly_fields = (
+        "booking",
+        "get_service",
+        "rating",
+        "created_at"
+    )
+    def get_service(self, obj):
+        return obj.booking.service
+    
+    get_service.short_description = "Service"

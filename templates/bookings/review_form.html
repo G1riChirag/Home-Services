@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card shadow-sm">
+  <div class="card-body">
+    <h3 class="card-title mb-3">Leave a Review for {{ booking.service.name }}</h3>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label" for="{{ form.rating.id_for_label }}">Rating (1–5)</label>
+          {{ form.rating }}
+          {% for e in form.rating.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="col-12">
+          <label class="form-label" for="{{ form.comment.id_for_label }}">Add a Comment (optional)</label>
+          {{ form.comment }}
+          {% for e in form.comment.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+        </div>
+      </div>
+
+      <div class="d-flex gap-2 mt-4">
+        <button type="submit" class="btn btn-primary">Submit Review</button>
+        <a class="btn btn-outline-secondary" href="{% url 'booking-detail' booking.id %}">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

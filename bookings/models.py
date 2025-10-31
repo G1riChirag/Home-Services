@@ -30,6 +30,17 @@ class Booking(models.Model):
     def __str__(self):
         return f"Booking({self.id}, {self.user.username}, {self.type}, {self.status})"
 
+class Review(models.Model):
+    booking = models.OneToOneField(Booking, on_delete=models.CASCADE, related_name="review")
+    rating = models.PositiveSmallIntegerField(choices=[(i, i) for i in range (1, 6)])
+    comment = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Review({self.booking.id}, {self.rating})"
+    
+    def get_service(self):
+        return self.booking.service 
 
 class ContactEvent(models.Model):
     """

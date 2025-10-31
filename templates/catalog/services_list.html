@@ -10,6 +10,11 @@
       <p class="text-muted">{{ s.category }}</p>
       <p>{{ s.description|default:"" }}</p>
       <p><strong>Base:</strong> ${{ s.base_price_cents|floatformat:-2 }}</p>
+      {% if s.average_rating %}
+        <p><strong>Average Rating:</strong> {{ s.average_rating }}/5</p>
+      {% else %}
+        <p><em>No ratings yet.</em></p>
+      {% endif %}
     </div>
   </div>
 {% empty %}

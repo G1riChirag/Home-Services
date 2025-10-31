@@ -9,6 +9,11 @@
       <h5>{{ p.title }}</h5>
       <p>{{ p.description|truncatechars:120 }}</p>
       <p><strong>Price:</strong> ${{ p.price_cents|floatformat:-2 }}</p>
+      {% if p.average_rating %}
+        <p><strong>Average Rating:</strong> {{ p.average_rating }}/5</p>
+      {% else %}
+        <p><em>No ratings yet.</em></p>
+      {% endif %}
       <a class="btn btn-outline-primary" href="{% url 'package-detail' p.pk %}">View</a>
     </div>
   </div>

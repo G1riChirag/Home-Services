@@ -1,5 +1,5 @@
 from django import forms
-from .models import Booking
+from .models import Booking, Review
 
 class BookingForm(forms.ModelForm):
     class Meta:
@@ -35,3 +35,12 @@ class BookingForm(forms.ModelForm):
                 cleaned["quoted_price_cents"] = svc.base_price_cents
 
         return cleaned
+    
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Review
+        fields = ["rating", "comment", "anonymous"]
+        widgets = {
+            "rating": forms.Select(choices=[(i, i) for i in range(1, 6)], attrs={"class": "form-select"}),
+            "comment": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
+        }

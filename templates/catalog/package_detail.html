@@ -4,5 +4,22 @@
 <h3>{{ package.title }}</h3>
 <p>{{ package.description }}</p>
 <p><strong>Price:</strong> ${{ package.price_cents|floatformat:-2 }}</p>
+{% if average_rating %}
+  <p><strong>Average Rating:</strong>{{ average_rating }}/5</p>
+{% else %}
+  <p><em>No reviews yet.</em></p>
+{% endif %}
 <a class="btn btn-primary" href="{% url 'booking-new' %}">Book this package</a>
+<hr>
+<h4>Reviews</h4>
+{% if reviews %}
+{% for review in reviews %}
+  <div class="border rounded p-2 mb-2">
+    <p>Rating: {{ review.rating }}/5</p>
+    <p>{{ review.comment|default:"No comment provided." }}</p>
+  </div>
+{% endfor %}
+{% else %}
+  <p>No reviews yet for this package.</p>
+{% endif %}
 {% endblock %}
