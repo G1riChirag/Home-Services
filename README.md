@@ -174,6 +174,10 @@ Regular users cannot access the admin portal and cannot create or modify service
 - Sensitive records such as exposure alerts are intended to expire after approximately 15 days. 
 - To simulate, follow the instructions in expire_15days_script.py.
 
+## 11. Unit Testing
+To run the unit tests, just run ```pytest``` in the venv terminal. 
+Make sure you've installed requirements.txt before you do this.
+
 ## 11. Troubleshooting
 
 - **405 on /logout**: Ensure you submit a **POST** form to `users:logout` and use Django’s `LogoutView`.
