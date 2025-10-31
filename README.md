@@ -3,6 +3,14 @@
 A secure “Home Services” demo app for **COMP SCI 7412/4812 – Secure Software Engineering**.  
 It demonstrates **privacy-by-design**: minimal data collection, TOTP 2FA, secure cookies, brute‑force protection (django‑axes), CSRF, and basic authorization for sensitive operations..
 
+Group Members:
+- Aditya Dixit
+- Atiq Ullah Ador
+- Chirag Giri
+- Sk Md Shariful Islam Arafat
+- Vishal Shrikanth Kulkarni
+- Khush Patel
+
 ---
 
 ## 1. Install the Environment
